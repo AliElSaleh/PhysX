@@ -1,5 +1,3 @@
-if windows Compiler cl else Compiler clang
-
 Assembly LowLevelDynamics_static_64
 Type     static_lib
 

@@ -220,6 +220,7 @@ NpPhysics* NpPhysics::createInstance(PxU32 version, PxFoundation& foundation, co
 		//SerialFactory::createInstance();
 		mInstance = PX_NEW (NpPhysics)(scale, pxvOffsetTable, trackOutstandingAllocations, pvd);
 		NpFactory::createInstance();
+
 		
 #if PX_SUPPORT_PVD			
 	    if(pvd)

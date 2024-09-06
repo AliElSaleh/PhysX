@@ -1,0 +1,79 @@
+Assembly Kapla
+RunAssembly
+
+include ../physx/common.buildvars
+
+SourceDirectory           source
+BuildDirectory            Build/x64/$Assembly
+IntermediateDirectory     Intermediate/$Assembly
+
+Includes [
+    source/demoFramework
+    source/demoFramework/Render
+    source/kaplaDemo
+    source/kaplaDemo/Fracture
+    source/kaplaDemo/Fracture/Core
+    source/kaplaDemo/Vec
+    externals/glew-1.13.0/include
+    externals/hbao+3.0/include
+    externals/cg/2.2/include
+    ../pxshared/include
+    ../externals/targa/include
+    ../externals/directx/include
+    ../externals/atlmfc/include
+    ../physx/include
+    ../physx/include/gpu
+    ../physx/include/extensions
+    ../physx/include/cooking
+    ../physx/include/geometry
+    ../physx/source/foundation/include
+    ../physx/source/fastxml/include
+    ../physx/source/physxmetadata/core/include
+    ../physx/source/common/src
+    ../physx/samples/pxtoolkit/include
+]
+
+if compiler == cl {
+    CompilerFlags /EHsc
+    LinkerFlags   /NODEFAULTLIB:LIBCMT
+}
+
+Libraries [
+    msvcrt
+    PhysX_64
+    PhysXFoundation_64
+    PhysXCommon_64 
+    PhysXCooking_64 
+    PhysXTask_static_64
+    PhysXPvdSDK_static_64
+    PhysXExtensions_static_64
+    PhysXVehicle_static_64
+    PhysXCharacterKinematic_static_64
+    opengl32
+    glew
+    glut32
+    cg
+    cgGL
+    GFSDK_SSAO_GL.win64
+]
+
+LibraryDirectories [
+    ../physx/Build/Release
+    externals/glut-3.7.6/lib/Win64
+    externals/cg/2.2/lib.x64
+    externals/glew-1.13.0/Build
+    externals/hbao+3.0/lib/win64
+]
+
+Defines                   NDEBUG GLEW_STATIC PX_DEBUG=0 PX_CHECKED=0 PX_SUPPORT_PVD=0 PX_NVTX=0 ENABLE_PVD
+if windows                Defines WIN32 WIN64 _WIN32 _CRT_SECURE_NO_DEPRECATE
+
+Depends physx ../
+
+PostBuild.Copy ../physx/Build/Release/PhysX_64.dll                  $BuildDirectory
+PostBuild.Copy ../physx/Build/Release/PhysXFoundation_64.dll        $BuildDirectory
+PostBuild.Copy ../physx/Build/Release/PhysXCooking_64.dll           $BuildDirectory
+PostBuild.Copy externals/glut-3.7.6/bin/win64/glut32.dll            $BuildDirectory
+PostBuild.Copy externals/cg/2.2/bin.x64/cg.dll                      $BuildDirectory
+PostBuild.Copy externals/cg/2.2/bin.x64/cgGL.dll                    $BuildDirectory
+PostBuild.Copy externals/hbao+3.0/lib/win64/GFSDK_SSAO_GL.win64.dll $BuildDirectory

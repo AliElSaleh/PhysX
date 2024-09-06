@@ -1,0 +1,9 @@
+Assembly glew
+Type     static_lib
+Compiler cl
+
+SourceDirectory src
+Includes        include
+
+CompilerFlags   /MT /GR- /d2Zi+ # /Ot /Ox 
+Defines         GLEW_STATIC WIN64 NDEBUG

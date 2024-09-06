@@ -4,8 +4,6 @@ Type     shared_lib
 if mode ModePath %(Mode) else ModePath Release
 include physx/common.buildvars
 
-BaseDir               
-
 SourceDirectory       physx/source/physx
 IntermediateDirectory physx/int/physx
 BuildDirectory        physx/Build/$(ModePath)
@@ -103,6 +101,9 @@ PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXDevice64.dll $BuildDir
 
 .Help {
   Run "riftbuild" in this directory to build all PhysX libraries
+
+  To build and run the Kapla Demo, change directory to "kaplademo/", then run
+     riftbuild
   
   To build and run the samples, change directory to "physx/", then run
      riftbuild
