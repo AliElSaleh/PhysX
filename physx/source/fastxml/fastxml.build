@@ -1,0 +1,26 @@
+if mode ModePath %(Mode) else ModePath Release
+include ../../common.buildvars
+
+if windows Compiler cl else Compiler clang
+
+Assembly FastXML_static_64
+Type     static_lib
+
+IntermediateDirectory  ../../int/%_FileName
+BuildDirectory         ../../Build/$(ModePath)
+
+CompilerFlags          $PxCompilerFlags
+LinkerFlags            $PxLinkerFlags /subsystem:console
+Defines                $PxSharedDefines PX_PHYSX_STATIC_LIB
+if windows Defines     $PxWindowsDefines _LIB
+
+Includes [
+    include
+    ../../../pxshared/include
+    ../../include
+    ../common/src
+    ../foundation/include
+    ../physx/include
+    ../lowleveldynamics/include
+    ../physxgpu/include
+]

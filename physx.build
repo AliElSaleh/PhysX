@@ -1,0 +1,119 @@
+Assembly PhysX_64
+Type     shared_lib
+
+if mode ModePath %(Mode) else ModePath Release
+include physx/common.buildvars
+
+BaseDir               
+
+SourceDirectory       physx/source/physx
+IntermediateDirectory physx/int/physx
+BuildDirectory        physx/Build/$(ModePath)
+
+CompilerFlags         $PxCompilerFlags /Gd /GR- /GS- /GF /fp:fast /wd4514 /wd4820 /wd4127 /wd4710 /wd4711 /wd4577 /wd4996
+LinkerFlags           $PxLinkerFlags /subsystem:console /DELAYLOAD:"PhysXFoundation_64.dll" /DELAYLOAD:"PhysXCommon_64.dll"
+Defines               $PxSharedDefines PX_PHYSX_FOUNDATION_EXPORTS PX_PHYSX_CORE_EXPORTS PhysX_EXPORTS
+if windows Defines    $PxWindowsDefines _WINDLL PX_PHYSX_GPU_SHARED_LIB_NAME=PhysXGpu_64.dll
+
+if  windows           ExcludedSourceDirectories unix linux
+if !windows           ExcludedSourceDirectories windows 
+if  windows           ExcludedSourceFiles       *Linux.cpp
+if !windows           ExcludedSourceFiles       *Windows.cpp
+
+Includes [
+    pxshared/include
+    physx/include
+    physx/include/common
+    physx/source/physx/include
+    physx/source/physx/src
+    physx/source/physx/src/buffering
+    physx/source/physx/src/device
+    physx/source/common/include
+    physx/source/common/src
+    physx/source/foundation/include
+    physx/source/foundation/include
+    physx/source/geomutils/src
+    physx/source/geomutils/src/convex
+    physx/source/geomutils/include
+    physx/source/geomutils/include
+    physx/source/geomutils/src
+    physx/source/geomutils/src/common
+    physx/source/geomutils/src/gjk
+    physx/source/geomutils/src/convex
+    physx/source/geomutils/src/hf
+    physx/source/geomutils/src/ccd
+    physx/source/geomutils/src/contact
+    physx/source/geomutils/src/cooking
+    physx/source/geomutils/src/distance
+    physx/source/geomutils/src/intersection
+    physx/source/geomutils/src/mesh
+    physx/source/geomutils/src/pcm
+    physx/source/geomutils/src/sweep
+    physx/source/pvd/include
+    physx/source/lowlevel/api/include
+    physx/source/lowlevel/software/include
+    physx/source/lowlevel/common/include
+    physx/source/lowlevelaabb/include
+    physx/source/lowleveldynamics/include
+    physx/source/simulationcontroller/include
+    physx/source/simulationcontroller/src
+    physx/source/physxmetadata/core/include
+    physx/source/physxmetadata/extensions/include
+    physx/source/physxgpu/include
+    physx/source/scenequery/include
+]
+
+Libraries [
+    %_NativeLibs
+    PhysXFoundation_64
+    PhysXCommon_64 
+    LowLevel_static_64
+    LowLevelAABB_static_64
+    LowLevelDynamics_static_64
+    PhysXTask_static_64
+    SceneQuery_static_64
+    SimulationController_static_64
+    PhysXPvdSDK_static_64
+    PhysXExtensions_static_64
+    PhysXVehicle_static_64
+    PhysXCharacterKinematic_static_64
+]
+
+LibraryDirectories physx/Build/$(ModePath)
+
+Depends targa                  externals/targa
+Depends fastxml                physx/source/fastxml
+Depends foundation             physx/source/foundation              | mode=%mode
+Depends common                 physx/source                         | mode=%mode
+Depends lowlevel               physx/source/lowlevel                | mode=%mode
+Depends lowlevelaabb           physx/source/lowlevelaabb            | mode=%mode
+Depends lowleveldynamics       physx/source/lowleveldynamics        | mode=%mode
+Depends cooking                physx/source/physxcooking            | mode=%mode
+Depends extensions             physx/source/physxextensions         | mode=%mode
+Depends scene_query            physx/source/scenequery              | mode=%mode
+Depends simulation_controller  physx/source/simulationcontroller    | mode=%mode
+Depends task                   physx/source/task                    | mode=%mode
+Depends pvd                    physx/source                         | mode=%mode
+Depends vehicle                physx/source/physxvehicle            | mode=%mode
+Depends character              physx/source/physxcharacterkinematic | mode=%mode
+Depends metadata-core          physx/source/physxmetadata           | mode=%mode
+
+PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXGpu_64.dll   $BuildDirectory
+PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXDevice64.dll $BuildDirectory
+
+.Help {
+  Run "riftbuild" in this directory to build all PhysX libraries
+  
+  To build and run the samples, change directory to "physx/", then run
+     riftbuild
+  or riftbuild app=VALUE
+
+  where VALUE is any one of the following
+  - HelloWorld
+  - LargeWorld
+  - NorthPole
+  - Submarine
+  - Vehicle
+  - Bridges
+  - CustomGravity
+}

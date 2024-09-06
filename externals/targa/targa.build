@@ -1,0 +1,8 @@
+Assembly targa
+Type     static_lib
+
+BuildDirectory        bin
+IntermediateDirectory int
+SourceDirectory       src
+
+Includes              include

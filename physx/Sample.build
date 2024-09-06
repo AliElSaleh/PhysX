@@ -1,0 +1,66 @@
+if app SampleAppName %app else SampleAppName HelloWorld
+
+Assembly $SampleAppName
+RunAssembly | Build/Release
+
+include common.buildvars
+
+BuildDirectory            Build/$Assembly
+IntermediateDirectory     Intermediate/$Assembly
+
+IncludedSourceDirectories samples/samplebase samples/sampleframework samples/pxtoolkit samples/samplecctsharedcode samples/sample$SampleAppName
+if windows                ExcludedSourceDirectories */linux
+if linux                  ExcludedSourceDirectories */windows
+
+Includes [
+    include
+    ../pxshared/include
+    ../externals/targa/include
+    ../externals/directx/include
+    ../externals/atlmfc/include
+    source/foundation/include
+    source/fastxml/include
+    source/physxmetadata/core/include
+    source/common/src
+    samples/pxtoolkit/include
+    samples/samplebase
+    samples/samplecctsharedcode
+    samples/sampleframework/renderer/include
+    samples/sampleframework/framework/include
+    samples/sampleframework/platform/include
+    samples/sample$SampleAppName
+]
+
+if compiler == cl {
+    CompilerFlags /EHsc
+    LinkerFlags   /NODEFAULTLIB:LIBCMT
+}
+
+Libraries [
+    PhysX_64
+    PhysXFoundation_64
+    PhysXCommon_64 
+    PhysXCooking_64 
+    FastXML_static_64
+    LowLevel_static_64
+    LowLevelAABB_static_64
+    LowLevelDynamics_static_64
+    Metadata-Core_static_64
+    PhysXTask_static_64
+    SceneQuery_static_64
+    SimulationController_static_64
+    PhysXPvdSDK_static_64
+    PhysXExtensions_static_64
+    PhysXVehicle_static_64
+    PhysXCharacterKinematic_static_64
+    atls
+    targa
+    msvcrt
+]
+
+LibraryDirectories        Build/Release ../externals/atlmfc/lib/amd64 ../externals/targa/bin
+
+Defines                   NDEBUG
+if windows                Defines WIN64
+
+Depends physx ../

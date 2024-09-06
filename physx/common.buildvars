@@ -1,0 +1,20 @@
+if mode Config %(Mode) else Config Release
+if windows Compiler cl else Compiler clang++
+
+if config == release {
+    PxCompilerFlags  /O2 /EHa /MT
+    PxLinkerFlags    
+    PxSharedDefines  NDEBUG PX_DEBUG=0 PX_CHECKED=0 PX_SUPPORT_PVD=0 PX_NVTX=0
+}
+
+if config == debug {
+    PxCompilerFlags  /Od /Oy /Z7 /MTd
+    PxLinkerFlags    /DEBUG
+    PxSharedDefines  _DEBUG PX_DEBUG=1 PX_CHECKED=1 PX_SUPPORT_PVD=1 PX_NVTX=0
+}
+
+if windows PxWindowsDefines WIN32 WIN64 _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _WINSOCK_DEPRECATED_NO_WARNINGS _MBCS
+
+
+# make sure all build files are used from their respective directory
+AssertWorkingDirectory .
