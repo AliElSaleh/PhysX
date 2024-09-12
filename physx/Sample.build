@@ -5,8 +5,8 @@ RunAssembly | Build/Release
 
 include common.buildvars
 
-BuildDirectory            Build/$Assembly
-IntermediateDirectory     Intermediate/$Assembly
+BuildDirectory            Build/Release
+IntermediateDirectory     Intermediate/Release
 
 IncludedSourceDirectories samples/samplebase samples/sampleframework samples/pxtoolkit samples/samplecctsharedcode samples/sample$SampleAppName
 if windows                ExcludedSourceDirectories */linux
@@ -31,6 +31,8 @@ Includes [
     samples/sample$SampleAppName
 ]
 
+if linux Includes ../externals/cg-linux/include
+
 if compiler == cl {
     CompilerFlags /EHsc
     LinkerFlags   /NODEFAULTLIB:LIBCMT
@@ -53,14 +55,33 @@ Libraries [
     PhysXExtensions_static_64
     PhysXVehicle_static_64
     PhysXCharacterKinematic_static_64
-    atls
     targa
-    msvcrt
 ]
 
-LibraryDirectories        Build/Release ../externals/atlmfc/lib/amd64 ../externals/targa/bin
+if linux             Libraries X11 Xxf86vm Cg CgGL GL GLU GLEW glut
+if linux             LibraryDirectories ../externals/glew-linux/lib ../externals/cg-linux/lib
 
-Defines                   NDEBUG
-if windows                Defines WIN64
+if windows           Libraries msvcrt atls
+if windows           LibraryDirectories ../externals/atlmfc/lib/amd64
+LibraryDirectories   Build/Release ../externals/targa/bin
+
+Defines              NDEBUG
+if windows           Defines WIN64
+
+if linux {
+    PostBuild.Copy   ../externals/cg-linux/lib/libCg.so Build/Release
+    PostBuild.Copy   ../externals/cg-linux/lib/libCgGL.so Build/Release
+}
+
+if linux AssertProgramExists xterm
+Program.xterm.ErrorMessage {
+    Running the sample demo apps requires the XTerm terminal emulator.
+    
+    XTerm can be installed through your package manager.
+
+    Once installed, you may also need to install the "misc" fonts
+     - xorg-fonts-misc
+     then refresh the font cache (this process may be different between distros)
+}
 
 Depends physx ../

@@ -10,10 +10,11 @@ BuildDirectory             ../Build/$(ModePath)
 IncludedSourceDirectories  common geomutils compiler
 
 CompilerFlags              $PxCompilerFlags
-LinkerFlags                $PxLinkerFlags /subsystem:console /DELAYLOAD:"PhysXFoundation_64.dll"
+LinkerFlags                $PxLinkerFlags
+if windows LinkerFlags     /DELAYLOAD:"PhysXFoundation_64.dll"
 
-if  windows                ExcludedSourceDirectories unix linux
-if !windows                ExcludedSourceDirectories windows
+if  windows                ExcludedSourceDirectories */unix */linux
+if !windows                ExcludedSourceDirectories */windows
 if  windows                ExcludedSourceFiles *Linux.cpp
 if !windows                ExcludedSourceFiles *Windows.cpp
 

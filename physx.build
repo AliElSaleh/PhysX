@@ -4,19 +4,20 @@ Type     shared_lib
 if mode ModePath %(Mode) else ModePath Release
 include physx/common.buildvars
 
-SourceDirectory       physx/source/physx
-IntermediateDirectory physx/int/physx
-BuildDirectory        physx/Build/$(ModePath)
+SourceDirectory        physx/source/physx/src
+IntermediateDirectory  physx/int/physx
+BuildDirectory         physx/Build/$(ModePath)
 
-CompilerFlags         $PxCompilerFlags /Gd /GR- /GS- /GF /fp:fast /wd4514 /wd4820 /wd4127 /wd4710 /wd4711 /wd4577 /wd4996
-LinkerFlags           $PxLinkerFlags /subsystem:console /DELAYLOAD:"PhysXFoundation_64.dll" /DELAYLOAD:"PhysXCommon_64.dll"
-Defines               $PxSharedDefines PX_PHYSX_FOUNDATION_EXPORTS PX_PHYSX_CORE_EXPORTS PhysX_EXPORTS
-if windows Defines    $PxWindowsDefines _WINDLL PX_PHYSX_GPU_SHARED_LIB_NAME=PhysXGpu_64.dll
+CompilerFlags          $PxCompilerFlags
+LinkerFlags            $PxLinkerFlags
+if windows LinkerFlags /DELAYLOAD:"PhysXFoundation_64.dll" /DELAYLOAD:"PhysXCommon_64.dll"
+Defines                $PxSharedDefines PX_PHYSX_FOUNDATION_EXPORTS PX_PHYSX_CORE_EXPORTS PhysX_EXPORTS
+if windows Defines     $PxWindowsDefines _WINDLL PX_PHYSX_GPU_SHARED_LIB_NAME=PhysXGpu_64.dll
 
-if  windows           ExcludedSourceDirectories unix linux
-if !windows           ExcludedSourceDirectories windows 
-if  windows           ExcludedSourceFiles       *Linux.cpp
-if !windows           ExcludedSourceFiles       *Windows.cpp
+if  windows            ExcludedSourceDirectories unix linux
+if !windows            ExcludedSourceDirectories windows 
+if  windows            ExcludedSourceFiles       *Linux.cpp
+if !windows            ExcludedSourceFiles       *Windows.cpp
 
 Includes [
     pxshared/include
@@ -96,8 +97,14 @@ Depends vehicle                physx/source/physxvehicle            | mode=%mode
 Depends character              physx/source/physxcharacterkinematic | mode=%mode
 Depends metadata-core          physx/source/physxmetadata           | mode=%mode
 
-PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXGpu_64.dll   $BuildDirectory
-PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXDevice64.dll $BuildDirectory
+if windows {
+    PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXGpu_64.dll   $BuildDirectory
+    PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXDevice64.dll $BuildDirectory
+}
+
+if linux {
+    PostBuild.Copy physx/bin/linux.clang/release/libPhysXGpu_64.so $BuildDirectory
+}
 
 .Help {
   Run "riftbuild" in this directory to build all PhysX libraries
@@ -108,13 +115,13 @@ PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXDevice64.dll $BuildDir
   To build and run the samples, change directory to "physx/", then run
      riftbuild
   or riftbuild app=VALUE
-
-  where VALUE is any one of the following
-  - HelloWorld
-  - LargeWorld
-  - NorthPole
-  - Submarine
-  - Vehicle
-  - Bridges
-  - CustomGravity
+    
+    where VALUE is any one of the following
+    - HelloWorld
+    - LargeWorld
+    - NorthPole
+    - Submarine
+    - Vehicle
+    - Bridges
+    - CustomGravity
 }

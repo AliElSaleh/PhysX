@@ -4,21 +4,22 @@ Type     shared_lib
 if mode ModePath %(Mode) else ModePath Release
 include ../../common.buildvars
 
-SourceDirectory       src
-IntermediateDirectory ../../int/%_FileName
-BuildDirectory        ../../Build/$(ModePath)
+SourceDirectory        src
+IntermediateDirectory  ../../int/%_FileName
+BuildDirectory         ../../Build/$(ModePath)
 
-CompilerFlags         $PxCompilerFlags /Gd /GR- /GS- /GF /fp:fast /wd4514 /wd4820 /wd4127 /wd4710 /wd4711 /wd4577 /wd4996
-LinkerFlags           $PxLinkerFlags /subsystem:console /DELAYLOAD:"PhysXFoundation_64.dll" /DELAYLOAD:"PhysXCommon_64.dll"
-Libraries             %_NativeLibs PhysXCommon_64 PhysXFoundation_64
-LibraryDirectories    ../../Build/$(ModePath)
-Defines               $PxSharedDefines PX_COOKING PX_PHYSX_COOKING_EXPORTS PX_PHYSX_COMMON_EXPORTS PX_PHYSX_FOUNDATION_EXPORTS PX_PHYSX_LOADER_EXPORTS PX_PHYSX_CORE_EXPORTS PhysXCooking_EXPORTS 
-if windows Defines    $PxWindowsDefines _WINDLL
+CompilerFlags          $PxCompilerFlags
+LinkerFlags            $PxLinkerFlags
+if compiler == cl      LinkerFlags /DELAYLOAD:"PhysXFoundation_64.dll" /DELAYLOAD:"PhysXCommon_64.dll"
+Libraries              %_NativeLibs PhysXCommon_64 PhysXFoundation_64
+LibraryDirectories     ../../Build/$(ModePath)
+Defines                $PxSharedDefines PX_COOKING PX_PHYSX_COOKING_EXPORTS PX_PHYSX_COMMON_EXPORTS PX_PHYSX_FOUNDATION_EXPORTS PX_PHYSX_LOADER_EXPORTS PX_PHYSX_CORE_EXPORTS PhysXCooking_EXPORTS 
+if windows Defines     $PxWindowsDefines _WINDLL
 
-if  windows           ExcludedSourceDirectories unix linux
-if !windows           ExcludedSourceDirectories windows
-if  windows           ExcludedSourceFiles *Linux.cpp
-if !windows           ExcludedSourceFiles *Windows.cpp
+if  windows            ExcludedSourceDirectories unix linux
+if !windows            ExcludedSourceDirectories windows
+if  windows            ExcludedSourceFiles *Linux.cpp
+if !windows            ExcludedSourceFiles *Windows.cpp
 
 Includes [
     include

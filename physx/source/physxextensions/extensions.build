@@ -8,8 +8,8 @@ SourceDirectory        src
 IntermediateDirectory  ../../int/%_FileName
 BuildDirectory         ../../Build/$(ModePath)
 
-CompilerFlags          $PxCompilerFlags /Gd /GR- /GS- /fp:fast /wd4514 /wd4820 /wd4127 /wd4710 /wd4711 /wd4577 /wd4996
-LinkerFlags            $PxLinkerFlags /subsystem:console
+CompilerFlags          $PxCompilerFlags
+LinkerFlags            $PxLinkerFlags
 Defines                $PxSharedDefines PX_PHYSX_STATIC_LIB
 if windows Defines     $PxWindowsDefines _LIB
 

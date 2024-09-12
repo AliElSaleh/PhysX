@@ -9,7 +9,7 @@ IntermediateDirectory ../../int/%_FileName
 BuildDirectory        ../../Build/$(ModePath)
 
 CompilerFlags         $PxCompilerFlags
-LinkerFlags           $PxLinkerFlags /subsystem:console
+LinkerFlags           $PxLinkerFlags
 Defines               $PxSharedDefines PX_PHYSX_STATIC_LIB
 if windows Defines    $PxWindowsDefines _LIB
 
