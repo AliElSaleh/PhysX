@@ -73,6 +73,11 @@ if linux {
     PostBuild.Copy   ../externals/cg-linux/lib/libCgGL.so Build/Release
 }
 
+AssertPlatform Windows Linux
+Platform.macOS.ErrorMessage {
+    The sample demo apps cannot be run on macOS
+}
+
 if linux AssertProgramExists xterm
 Program.xterm.ErrorMessage {
     Running the sample demo apps requires the XTerm terminal emulator.
