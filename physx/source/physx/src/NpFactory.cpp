@@ -98,9 +98,7 @@ void NpFactory::release()
 void NpFactory::createInstance()
 {
 	PX_ASSERT(!mInstance);
-printf("yo\n");
 	mInstance = PX_NEW(NpFactory)();
-printf("yo\n");
 }
 
 void NpFactory::destroyInstance()
