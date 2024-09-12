@@ -1,5 +1,5 @@
 Assembly Metadata-Core_static_64
-Type     shared_lib
+Type     static_lib
 
 if mode ModePath %(Mode) else ModePath Release
 include ../../common.buildvars
@@ -9,7 +9,7 @@ BuildDirectory         ../../Build/$(ModePath)
 
 CompilerFlags          $PxCompilerFlags
 LinkerFlags            $PxLinkerFlags
-Defines                $PxSharedDefines # PX_PHYSX_STATIC_LIB
+Defines                $PxSharedDefines PX_PHYSX_STATIC_LIB
 if windows Defines     $PxWindowsDefines _LIB
 
 Includes [
