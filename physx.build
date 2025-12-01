@@ -1,25 +1,33 @@
 Assembly PhysX_64
-Type     shared_lib
+Type     shared
 
-if mode ModePath %(Mode) else ModePath Release
 include physx/common.buildvars
 
 SourceDirectory        physx/source/physx/src
 IntermediateDirectory  physx/int/physx
-BuildDirectory         physx/Build/$(ModePath)
+BuildDirectory         physx/Build/%(Mode)
 
-CompilerFlags          $PxCompilerFlags
-LinkerFlags            $PxLinkerFlags
-if windows LinkerFlags /DELAYLOAD:"PhysXFoundation_64.dll" /DELAYLOAD:"PhysXCommon_64.dll"
+Compiler.Flags         $PxCompilerFlags
+Linker.Flags           $PxLinkerFlags
+Linker.Flags:windows   /DELAYLOAD:"PhysXFoundation_64.dll" /DELAYLOAD:"PhysXCommon_64.dll"
 Defines                $PxSharedDefines PX_PHYSX_FOUNDATION_EXPORTS PX_PHYSX_CORE_EXPORTS PhysX_EXPORTS
-if windows Defines     $PxWindowsDefines _WINDLL PX_PHYSX_GPU_SHARED_LIB_NAME=PhysXGpu_64.dll
+Defines:windows        $PxWindowsDefines _WINDLL PX_PHYSX_GPU_SHARED_LIB_NAME=PhysXGpu_64.dll
 
-if  windows            ExcludedSourceDirectories unix linux
-if !windows            ExcludedSourceDirectories windows 
-if  windows            ExcludedSourceFiles       *Linux.cpp
-if !windows            ExcludedSourceFiles       *Windows.cpp
+if windows
+{
+    SourceDirectories.Exclude unix linux
+    SourceFiles.Exclude       *Linux.cpp
 
-Includes [
+}
+
+if unix
+{
+    SourceDirectories.Exclude windows 
+    SourceFiles.Exclude       *Windows.cpp
+}
+
+Includes
+[
     pxshared/include
     physx/include
     physx/include/common
@@ -27,10 +35,6 @@ Includes [
     physx/source/physx/src
     physx/source/physx/src/buffering
     physx/source/physx/src/device
-    physx/source/common/include
-    physx/source/common/src
-    physx/source/foundation/include
-    physx/source/foundation/include
     physx/source/geomutils/src
     physx/source/geomutils/src/convex
     physx/source/geomutils/include
@@ -48,65 +52,39 @@ Includes [
     physx/source/geomutils/src/mesh
     physx/source/geomutils/src/pcm
     physx/source/geomutils/src/sweep
-    physx/source/pvd/include
-    physx/source/lowlevel/api/include
-    physx/source/lowlevel/software/include
-    physx/source/lowlevel/common/include
-    physx/source/lowlevelaabb/include
-    physx/source/lowleveldynamics/include
-    physx/source/simulationcontroller/include
-    physx/source/simulationcontroller/src
-    physx/source/physxmetadata/core/include
-    physx/source/physxmetadata/extensions/include
     physx/source/physxgpu/include
-    physx/source/scenequery/include
 ]
 
-Libraries [
-    %_NativeLibs
-    PhysXFoundation_64
-    PhysXCommon_64 
-    LowLevel_static_64
-    LowLevelAABB_static_64
-    LowLevelDynamics_static_64
-    PhysXTask_static_64
-    SceneQuery_static_64
-    SimulationController_static_64
-    PhysXPvdSDK_static_64
-    PhysXExtensions_static_64
-    PhysXVehicle_static_64
-    PhysXCharacterKinematic_static_64
-]
+Depend externals/targa
+Depend physx/source/fastxml                 | mode=%mode
+Depend physx/source/foundation              | mode=%mode
+Depend physx/source/common.build            | mode=%mode
+Depend physx/source/lowlevel                | mode=%mode
+Depend physx/source/lowlevelaabb            | mode=%mode
+Depend physx/source/lowleveldynamics        | mode=%mode
+Depend physx/source/physxextensions         | mode=%mode
+Depend physx/source/scenequery              | mode=%mode
+Depend physx/source/simulationcontroller    | mode=%mode
+Depend physx/source/task                    | mode=%mode
+Depend physx/source/pvd.build               | mode=%mode
+Depend physx/source/physxcooking            | mode=%mode
+Depend physx/source/physxvehicle            | mode=%mode
+Depend physx/source/physxcharacterkinematic | mode=%mode
+Depend physx/source/physxmetadata           | mode=%mode
 
-LibraryDirectories physx/Build/$(ModePath)
-
-Depends targa                  externals/targa
-Depends fastxml                physx/source/fastxml
-Depends foundation             physx/source/foundation              | mode=%mode
-Depends common                 physx/source                         | mode=%mode
-Depends lowlevel               physx/source/lowlevel                | mode=%mode
-Depends lowlevelaabb           physx/source/lowlevelaabb            | mode=%mode
-Depends lowleveldynamics       physx/source/lowleveldynamics        | mode=%mode
-Depends cooking                physx/source/physxcooking            | mode=%mode
-Depends extensions             physx/source/physxextensions         | mode=%mode
-Depends scene_query            physx/source/scenequery              | mode=%mode
-Depends simulation_controller  physx/source/simulationcontroller    | mode=%mode
-Depends task                   physx/source/task                    | mode=%mode
-Depends pvd                    physx/source                         | mode=%mode
-Depends vehicle                physx/source/physxvehicle            | mode=%mode
-Depends character              physx/source/physxcharacterkinematic | mode=%mode
-Depends metadata-core          physx/source/physxmetadata           | mode=%mode
-
-if windows {
+if windows
+{
     PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXGpu_64.dll   $BuildDirectory
     PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXDevice64.dll $BuildDirectory
 }
 
-if linux {
+if linux
+{
     PostBuild.Copy physx/bin/linux.clang/release/libPhysXGpu_64.so $BuildDirectory
 }
 
-.Help {
+.Help
+{
   Run "riftbuild" in this directory to build all PhysX libraries
 
   To build and run the Kapla Demo, change directory to "kaplademo/", then run
@@ -125,3 +103,4 @@ if linux {
     - Bridges
     - CustomGravity
 }
+

@@ -1,18 +1,31 @@
-if app SampleAppName %app else SampleAppName HelloWorld
-
-Assembly $SampleAppName
-RunAssembly | Build/Release
+Assembly %app
+.run
 
 include common.buildvars
 
-BuildDirectory            Build/Release
-IntermediateDirectory     Intermediate/Release
+BuildDirectory        Build/%app/%Mode
+IntermediateDirectory int/%app/%Mode
 
-IncludedSourceDirectories samples/samplebase samples/sampleframework samples/pxtoolkit samples/samplecctsharedcode samples/sample$SampleAppName
-if windows                ExcludedSourceDirectories */linux
-if linux                  ExcludedSourceDirectories */windows
+SourceDirectories
+[
+    samples/samplebase
+    samples/sampleframework
+    samples/pxtoolkit
+    samples/samplecctsharedcode
+    samples/sample%app
+]
 
-Includes [
+SourceDirectories.Exclude:windows */linux
+SourceDirectories.Exclude:linux   */windows
+
+if compiler == cl
+{
+    Compiler.Flags /EHsc
+    Linker.Flags   /NODEFAULTLIB:LIBCMT
+}
+
+Includes
+[
     include
     ../pxshared/include
     ../externals/targa/include
@@ -28,21 +41,15 @@ Includes [
     samples/sampleframework/renderer/include
     samples/sampleframework/framework/include
     samples/sampleframework/platform/include
-    samples/sample$SampleAppName
+    samples/sample%app
 ]
 
-if linux Includes ../externals/cg-linux/include
-
-if compiler == cl {
-    CompilerFlags /EHsc
-    LinkerFlags   /NODEFAULTLIB:LIBCMT
-}
-
-Libraries [
+Libraries
+[
     PhysX_64
     PhysXFoundation_64
-    PhysXCommon_64 
-    PhysXCooking_64 
+    PhysXCommon_64
+    PhysXCooking_64
     FastXML_static_64
     LowLevel_static_64
     LowLevelAABB_static_64
@@ -58,30 +65,54 @@ Libraries [
     targa
 ]
 
-if linux             Libraries X11 Xxf86vm Cg CgGL GL GLU GLEW glut
-if linux             LibraryDirectories ../externals/glew-linux/lib ../externals/cg-linux/lib
+Library.Paths Build/%Mode ../externals/targa/bin
 
-if windows           Libraries msvcrt atls
-if windows           LibraryDirectories ../externals/atlmfc/lib/amd64
-LibraryDirectories   Build/Release ../externals/targa/bin
+if mode == debug
+{
+    Defines _DEBUG
+}
+else
+{
+    Defines NDEBUG
+}
 
-Defines              NDEBUG
-if windows           Defines WIN64
+if linux
+{
+    Includes ../externals/cg-linux/include
 
-if linux {
+    Libraries X11 Xxf86vm Cg CgGL GL GLU GLEW glut
+    Library.Paths ../externals/glew-linux/lib ../externals/cg-linux/lib
+
     PostBuild.Copy   ../externals/cg-linux/lib/libCg.so Build/Release
     PostBuild.Copy   ../externals/cg-linux/lib/libCgGL.so Build/Release
 }
 
-AssertPlatform Windows Linux
-Platform.macOS.ErrorMessage {
-    The sample demo apps cannot be run on macOS
+if windows
+{
+    Libraries msvcrt atls
+    Library.Paths ../externals/atlmfc/lib/amd64
+
+    Defines WIN64
+
+    PostBuild.Copy ../physx/Build/%Mode/PhysX_64.dll           $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/PhysXGpu_64.dll        $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/PhysXDevice64.dll      $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/PhysXCommon_64.dll     $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/PhysXCooking_64.dll    $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/PhysXFoundation_64.dll $BuildDirectory
 }
 
-if linux AssertProgramExists xterm
-Program.xterm.ErrorMessage {
+Assert.Platform Windows Linux
+Platform.macOS.ErrorMessage
+{
+    The sample demo apps cannot be built nor run on macOS
+}
+
+Assert.Program:linux xterm
+Program.xterm.ErrorMessage
+{
     Running the sample demo apps requires the XTerm terminal emulator.
-    
+
     XTerm can be installed through your package manager.
 
     Once installed, you may also need to install the "misc" fonts
@@ -89,4 +120,6 @@ Program.xterm.ErrorMessage {
      then refresh the font cache (this process may be different between distros)
 }
 
-Depends physx ../
+Depend ../physx.build | mode=%mode
+
+option.app(HelloWorld LargeWorld NorthPole Submarine Vehicle Bridges CustomGravity)

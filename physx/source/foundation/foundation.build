@@ -1,26 +1,35 @@
 Assembly PhysXFoundation_64
 Type     shared_lib
 
-if mode ModePath %(Mode) else ModePath Release
 include ../../common.buildvars
 
 SourceDirectory       src
 IntermediateDirectory ../../int/%_FileName
-BuildDirectory        ../../Build/$(ModePath)
+BuildDirectory        ../../Build/%(Mode)
 
-CompilerFlags         $PxCompilerFlags
-LinkerFlags           $PxLinkerFlags
+Compiler.Flags        $PxCompilerFlags
+Linker.Flags          $PxLinkerFlags
 Libraries             %_NativeLibs
 Defines               $PxSharedDefines PX_PHYSX_FOUNDATION_EXPORTS
-if windows Defines    _WINDLL
+Defines:windows       _WINDLL
 
-if  windows           ExcludedSourceDirectories unix linux
-if !windows           ExcludedSourceDirectories windows
-if  windows           ExcludedSourceFiles *Linux.cpp
-if !windows           ExcludedSourceFiles *Windows.cpp
+if windows
+{
 
-Includes [
+    SourceDirectories.Exclude unix linux
+    SourceFiles.Exclude       *Linux.cpp
+}
+else
+{
+    SourceDirectories.Exclude windows
+    SourceFiles.Exclude       *Windows.cpp
+}
+
+Includes
+[
     include
     ../../../pxshared/include
     ../../include
 ]
+
+Includes.Public include

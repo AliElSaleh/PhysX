@@ -1,20 +1,21 @@
 Assembly PhysXPvdSDK_static_64
 Type     static_lib
 
-if mode ModePath %(Mode) else ModePath Release
 include ../common.buildvars
 
 IntermediateDirectory     ../int/%_FileName
-BuildDirectory            ../Build/$(ModePath)
+BuildDirectory            ../Build/%(Mode)
 
-IncludedSourceDirectories pvd physxmetadata
+SourceDirectories         pvd physxmetadata
 
-CompilerFlags             $PxCompilerFlags
-LinkerFlags               $PxLinkerFlags
+Compiler.Flags            $PxCompilerFlags
+Linker.Flags              $PxLinkerFlags
 Defines                   $PxSharedDefines PX_PHYSX_STATIC_LIB
-if windows Defines        $PxWindowsDefines _LIB
+Defines:windows           $PxWindowsDefines _LIB
 
-Includes [
+Includes.Public pvd/include
+Includes
+[
     pvd/include
     pvd/src
     ../../pxshared/include

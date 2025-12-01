@@ -1,5 +1,5 @@
 Assembly Kapla
-RunAssembly
+.run
 
 include ../physx/common.buildvars
 
@@ -7,7 +7,8 @@ SourceDirectory           source
 BuildDirectory            Build/x64/$Assembly
 IntermediateDirectory     Intermediate/$Assembly
 
-Includes [
+Includes
+[
     source/demoFramework
     source/demoFramework/Render
     source/kaplaDemo
@@ -33,12 +34,14 @@ Includes [
     ../physx/samples/pxtoolkit/include
 ]
 
-if compiler == cl {
-    CompilerFlags /EHsc
-    LinkerFlags   /NODEFAULTLIB:LIBCMT
+if compiler == cl
+{
+    Compiler.Flags /EHsc
+    Linker.Flags   /NODEFAULTLIB:LIBCMT
 }
 
-Libraries [
+Libraries
+[
     msvcrt
     PhysX_64
     PhysXFoundation_64
@@ -57,18 +60,19 @@ Libraries [
     GFSDK_SSAO_GL.win64
 ]
 
-LibraryDirectories [
+Library.Paths
+[
     ../physx/Build/Release
     externals/glut-3.7.6/lib/Win64
     externals/cg/2.2/lib.x64
-    externals/glew-1.13.0/Build
     externals/hbao+3.0/lib/win64
 ]
 
-Defines                   NDEBUG GLEW_STATIC PX_DEBUG=0 PX_CHECKED=0 PX_SUPPORT_PVD=0 PX_NVTX=0 ENABLE_PVD
-if windows                Defines WIN32 WIN64 _WIN32 _CRT_SECURE_NO_DEPRECATE
+Defines        NDEBUG GLEW_STATIC PX_DEBUG=0 PX_CHECKED=0 PX_SUPPORT_PVD=0 PX_NVTX=0 ENABLE_PVD
+Defines:windows WIN32 WIN64 _WIN32 _CRT_SECURE_NO_DEPRECATE
 
-Depends physx ../
+Depend ../physx.build | mode=%mode
+Depend externals/glew-1.13.0
 
 PostBuild.Copy ../physx/Build/Release/PhysX_64.dll                  $BuildDirectory
 PostBuild.Copy ../physx/Build/Release/PhysXFoundation_64.dll        $BuildDirectory
@@ -77,3 +81,5 @@ PostBuild.Copy externals/glut-3.7.6/bin/win64/glut32.dll            $BuildDirect
 PostBuild.Copy externals/cg/2.2/bin.x64/cg.dll                      $BuildDirectory
 PostBuild.Copy externals/cg/2.2/bin.x64/cgGL.dll                    $BuildDirectory
 PostBuild.Copy externals/hbao+3.0/lib/win64/GFSDK_SSAO_GL.win64.dll $BuildDirectory
+
+Assert.Platform Windows

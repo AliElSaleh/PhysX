@@ -1,29 +1,36 @@
 Assembly PhysXCommon_64
 Type     shared_lib
 
-if mode ModePath %(Mode) else ModePath Release
 include ../common.buildvars
 
 IntermediateDirectory      ../int/%_FileName
-BuildDirectory             ../Build/$(ModePath)
+BuildDirectory             ../Build/%(Mode)
 
-IncludedSourceDirectories  common geomutils compiler
+SourceDirectories          common geomutils compiler
 
-CompilerFlags              $PxCompilerFlags
-LinkerFlags                $PxLinkerFlags
-if windows LinkerFlags     /DELAYLOAD:"PhysXFoundation_64.dll"
+Compiler.Flags             $PxCompilerFlags
+Linker.Flags               $PxLinkerFlags
+Linker.Flags:windows       /DELAYLOAD:"PhysXFoundation_64.dll"
 
-if  windows                ExcludedSourceDirectories */unix */linux
-if !windows                ExcludedSourceDirectories */windows
-if  windows                ExcludedSourceFiles *Linux.cpp
-if !windows                ExcludedSourceFiles *Windows.cpp
+if windows
+{
+    SourceDirectories.Exclude */unix */linux
+    SourceFiles.Exclude       *Linux.cpp
+}
+else
+{
+    SourceDirectories.Exclude */windows
+    SourceFiles.Exclude       *Windows.cpp
+}
 
-if x64                     ExcludedSourceDirectories compiler/resource_x86
-if x86                     ExcludedSourceDirectories compiler/resource_x64
+SourceDirectories.Exclude compiler/resource_x64
+SourceDirectories.Exclude compiler/resource_x86
 
-ExcludedSourceFiles        PhysX.rc PhysXCooking.rc PhysXFoundation.rc
+SourceFiles.Exclude PhysX.rc PhysXCooking.rc PhysXFoundation.rc
 
-Includes [
+Includes.Public common/include common/src
+Includes
+[
     common/include
     common/src
     ../../pxshared/include
@@ -49,7 +56,7 @@ Includes [
 ]
 
 Libraries          %_NativeLibs PhysXFoundation_64
-LibraryDirectories ../Build/$(ModePath)
+Library.Paths      ../Build/%Mode
 
 Defines            $PxSharedDefines PX_PHYSX_COMMON_EXPORTS PhysXCommon_EXPORTS
-if windows         Defines $PxWindowsDefines _WINDLL
+Defines:windows    $PxWindowsDefines _WINDLL
