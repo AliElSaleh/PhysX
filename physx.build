@@ -1,5 +1,5 @@
 Assembly PhysX_64
-Type     shared
+Type     shared_lib
 
 include physx/common.buildvars
 
@@ -74,13 +74,13 @@ Depend physx/source/physxmetadata           | mode=%mode
 
 if windows
 {
-    PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXGpu_64.dll   $BuildDirectory
-    PostBuild.Copy physx/bin/win.x86_64.vc140.mt/release/PhysXDevice64.dll $BuildDirectory
+    PostBuild.Copy physx/bin/win.x86_64.vc140.mt/%mode/PhysXGpu_64.dll   $BuildDirectory
+    PostBuild.Copy physx/bin/win.x86_64.vc140.mt/%mode/PhysXDevice64.dll $BuildDirectory
 }
 
 if linux
 {
-    PostBuild.Copy physx/bin/linux.clang/release/libPhysXGpu_64.so $BuildDirectory
+    PostBuild.Copy physx/bin/linux.clang/%-(mode)/libPhysXGpu_64.so $BuildDirectory
 }
 
 .Help

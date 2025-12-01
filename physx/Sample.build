@@ -44,6 +44,7 @@ Includes
     samples/sample%app
 ]
 
+##
 Libraries
 [
     PhysX_64
@@ -64,6 +65,7 @@ Libraries
     PhysXCharacterKinematic_static_64
     targa
 ]
+##
 
 Library.Paths Build/%Mode ../externals/targa/bin
 
@@ -80,11 +82,17 @@ if linux
 {
     Includes ../externals/cg-linux/include
 
-    Libraries X11 Xxf86vm Cg CgGL GL GLU GLEW glut
+    Libraries     X11 Xxf86vm Cg CgGL GL GLU GLEW glut
     Library.Paths ../externals/glew-linux/lib ../externals/cg-linux/lib
+ 
+    PostBuild.Copy   ../externals/cg-linux/lib/libCg.so   $BuildDirectory
+    PostBuild.Copy   ../externals/cg-linux/lib/libCgGL.so $BuildDirectory
 
-    PostBuild.Copy   ../externals/cg-linux/lib/libCg.so Build/Release
-    PostBuild.Copy   ../externals/cg-linux/lib/libCgGL.so Build/Release
+    PostBuild.Copy ../physx/Build/%Mode/libPhysX_64.so           $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/libPhysXGpu_64.so        $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/libPhysXCommon_64.so     $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/libPhysXCooking_64.so    $BuildDirectory
+    PostBuild.Copy ../physx/Build/%Mode/libPhysXFoundation_64.so $BuildDirectory
 }
 
 if windows
@@ -103,9 +111,9 @@ if windows
 }
 
 Assert.Platform Windows Linux
-Platform.macOS.ErrorMessage
+Platform.*.ErrorMessage
 {
-    The sample demo apps cannot be built nor run on macOS
+    The sample demo apps cannot be built nor run on %_platform
 }
 
 Assert.Program:linux xterm
